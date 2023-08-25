@@ -36,3 +36,95 @@
     transform: rotate(360deg);
   }
 }
+
+/* Navbar */
+
+.navbar {
+  height: 60px;
+}
+
+/* Home */
+
+.main-heading {
+  font-size: 4rem;
+  font-weight: bold;
+  padding: 20px;
+}
+
+.main-heading2 {
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+.signup {
+  padding-top: 20px;
+}
+
+.signup-button {
+  width: 7rem;
+}
+
+.signup-text {
+  padding-top: 10px;
+}
+
+/* Profile */
+
+.profile-container {
+  padding: 20px;
+}
+
+.profileimage {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+}
+
+.profile-buttons {
+  display: flex;
+}
+
+.profile-button {
+  padding-left: 7px;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.service {
+	display: flex;
+	justify-content: space-between;
+}
+
+.first-row {
+  padding-bottom: 15px;
+}
+
+.photo-column {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Adjust the gap size as needed */
+}
+
+.portfolio-photo {
+  width: 150px;
+  height: 150px;
+}
+
+/* Adjust the image size on smaller screens */
+@media (max-width: 576px) {
+  .profileimage {
+    width: 120px; /* Adjust the width for smaller screens */
+    height: 120px; /* Adjust the height for smaller screens */
+  }
+}
+
+/* Edit Profile */
+
+.edit-input {
+  display: flex;
+}
+
