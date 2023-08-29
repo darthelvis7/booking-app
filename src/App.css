@@ -124,7 +124,49 @@
 
 /* Edit Profile */
 
+.edit-profile-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
 .edit-input {
   display: flex;
 }
 
+.form-group {
+  display: flex;
+}
+
+.form-col {
+  display: flex;
+}
+
+.edit-image-container {
+  display: flex;
+}
+
+.custom-file-input {
+  display: none; /* Hide the default file input */
+}
+
+.custom-file-label {
+  color: blue; /* Set the text color to blue */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+/* Hide the file input's default label */
+.custom-file-input ~ .custom-file-label::before {
+  content: ''; /* Hide the default label content */
+  display: inline-block;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white; /* Change to the desired background color */
+}
+
+/* Style the custom label to look like a button */
+.custom-file-input:focus ~ .custom-file-label::before,
+.custom-file-input ~ .custom-file-label::before:hover {
+  border-color: #80bdff; /* Change to the desired border color */
+}

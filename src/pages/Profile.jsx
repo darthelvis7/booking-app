@@ -6,7 +6,11 @@ import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { useNavigate } from 'react-router-dom';
-
+import {
+  getUserProfileImageUrl,
+  getUserDocument,
+  updateUserDocumentField
+} from '../firebase';
 
 
 import me from '../assets/elviscropped.png';
@@ -16,7 +20,18 @@ import { UserContext } from '../UserContext';
 
 const Profile = () => {
   const { user, setUser } = useContext(UserContext);
+  const [bio, setBio] = useState(null);
+  const [business, setBusiness] = useState(null);
+  const [address, setAddress] = useState(null);
+  const [state, setState] = useState(null);
+  const [city, setCity] = useState(null);
+  const [zip, setZip] = useState(null);
+  const [phone, setPhone] = useState(null);
+
+
   const [profileImage, setProfileImage] = useState(null);
+	const [isLoading, setIsLoading] = useState(true); // Add loading state
+
 
 	const navigate = useNavigate();
 
@@ -24,26 +39,42 @@ const Profile = () => {
 		navigate('/editprofile')
 	};
 
+	useEffect(() => {
+    if (user) {
+      // Fetch the user data from Firestore using the user's UID
+      getUserDocument(user.uid)
+        .then((userData) => {
+          // setLocation(userData.location || '');
+          setBio(userData.bio || '');
+          setBusiness(userData.business || '');
+          setAddress(userData.address || '');
+          setCity(userData.city || '');
+          setState(userData.state || '');
+          setZip(userData.zip || '');
+          setPhone(userData.phone || '');
+          // setServices(userData.services || [{ name: '', price: 0 }]);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error('Error fetching user data:', error);
+          setIsLoading(false);
+        });
 
-  // useEffect(() => {
-  //   if (user) {
-  //     // Fetch the user data from Firestore using the user's UID
-  //     getUserDocument(user.uid)
-  //       .then((userData) => {
-  //         setLocation(userData.location || '');
-  //         setBio(userData.bio || '');
-  //         setServices(userData.services || [{ name: '', price: 0 }]);
-  //         setIsLoading(false);
-  //       })
-  //       .catch((error) => {
-  //         console.error('Error fetching user data:', error);
-  //         setIsLoading(false);
-  //       });
+      // Fetch the user's profileImageUrl and update the profileImage state
+      fetchUserProfileImageUrl(user.uid);
+    }
+  }, [user]);
 
-  //     // Fetch the user's profileImageUrl and update the profileImage state
-  //     fetchUserProfileImageUrl(user.uid);
-  //   }
-  // }, [user]);
+	const fetchUserProfileImageUrl = async (userId) => {
+    try {
+      const profileImageUrl = await getUserProfileImageUrl(userId);
+      setProfileImage(profileImageUrl);
+      setIsLoading(false); // Set loading state to false once the image is fetched
+    } catch (error) {
+      console.error('Error fetching profile image:', error);
+      setIsLoading(false); // Set loading state to false in case of an error
+    }
+  };
 
   return (
     <Container className="profile-container">
@@ -58,11 +89,12 @@ const Profile = () => {
               />
             ) : (
               <Image
-                className="profileimage img-fluid"
+                className="profileimage"
                 src={avatar}
                 roundedCircle
               />
             )}
+						
           </div>
         </Col>
         <Col xs={8} md={6}>
@@ -80,11 +112,9 @@ const Profile = () => {
               </div>
             </div>
           </div>
-          <div>About</div>
+          <div>Bio</div>
           <div>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Sint,
-            suscipit fugit. Corrupti quibusdam tempora voluptas adipisci ab,
-            assumenda alias culpa magni.
+           {bio}
           </div>
 					</div>
         </Col>
@@ -92,10 +122,10 @@ const Profile = () => {
 			<Row className='second-row'>
 				<Col xs={6} md={5}>
 					 <div>Location</div>
-					 <div>Business Name</div>
-					 <div>1111 Imagine Avenue</div>
-					 <div>Los Angeles, CA 90810</div>
-					 <div>111-111-1111</div>
+					 <div>{business}</div>
+					 <div>{address}</div>
+					 <div>{`${city}, ${state}                                                                       ${zip}`}</div>
+					 <div>{phone}</div>
 				</Col>
 				<Col xs={6}>
 						<div>Business Hours</div>

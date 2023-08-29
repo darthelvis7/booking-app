@@ -18,7 +18,7 @@ import {
 } from '@firebase/storage';
 import { async } from '@firebase/util';
 
-// Your web app's Firebase configuration
+// Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -81,7 +81,26 @@ export const createUserDocumentFromAuth = async (
   return userDocRef;
 };
 
-// Function to get the user's profile image URL
+// Get User Doc
+
+export const getUserDocument = async (userId) => {
+  try {
+    const userDocRef = doc(db, 'users', userId);
+    const userSnapshot = await getDoc(userDocRef);
+    if (userSnapshot.exists()) {
+      return userSnapshot.data();
+    } else {
+      console.error('User document not found.');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error getting user document:', error);
+    throw error;
+  }
+};
+
+// Image Update
+
 export const getUserProfileImageUrl = async (userId) => {
   try {
     // Get a reference to the user document in the Firestore database
@@ -128,5 +147,43 @@ export const updateUserDocumentProfileImage = async (userId, profileImage) => {
     return imageUrl;
   } catch (error) {
     throw new Error('Error uploading profile image:', error);
+  }
+};
+
+// Bio Update
+
+// export const updateUserDocumentBio = async (userId, bio) => {
+//   try {
+//     const userDocRef = doc(db, 'users', userId);
+//     await updateDoc(userDocRef, {
+//       bio,
+//     });
+//     console.log('User document updated successfully!', userDocRef);
+//   } catch (error) {
+//     console.error('Error updating user document:', error);
+//   }
+// };
+
+// export const updateUserDocumentBusiness = async (userId, business) => {
+//   try {
+//     const userDocRef = doc(db, 'users', userId);
+//     await updateDoc(userDocRef, {
+//       business,
+//     });
+//     console.log('User document updated successfully!', userDocRef);
+//   } catch (error) {
+//     console.error('Error updating user document:', error);
+//   }
+// };
+
+export const updateUserDocumentField = async (userId, fieldName, value) => {
+  try {
+    const userDocRef = doc(db, 'users', userId);
+    const updateData = {};
+    updateData[fieldName] = value;
+    await updateDoc(userDocRef, updateData);
+    console.log('User document updated successfully!', userDocRef);
+  } catch (error) {
+    console.error('Error updating user document:', error);
   }
 };
