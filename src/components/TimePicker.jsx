@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const TimePicker = ({ initialTime, onTimeChange, timeInterval }) => {
   const [selectedTime, setSelectedTime] = useState(initialTime);
+
+  useEffect(() => {
+    setSelectedTime(initialTime);
+  }, [initialTime]);
 
   const handleTimeChange = (event) => {
     const newTime = event.target.value;
