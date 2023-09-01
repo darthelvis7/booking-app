@@ -27,8 +27,17 @@ const Profile = () => {
   const [city, setCity] = useState(null);
   const [zip, setZip] = useState(null);
   const [phone, setPhone] = useState(null);
-
-
+  // const [services, setServices] = useState([{ name: '', description: '', price: 0 }]);
+  const [services, setServices] = useState([]);
+  const [availability, setAvailability] = useState({
+    sunday: { startTime: '', endTime: '' },
+    monday: { startTime: '', endTime: '' },
+    tuesday: { startTime: '', endTime: '' },
+    wednesday: { startTime: '', endTime: '' },
+    thursday: { startTime: '', endTime: '' },
+    friday: { startTime: '', endTime: '' },
+    saturday: { startTime: '', endTime: '' },
+  });
   const [profileImage, setProfileImage] = useState(null);
 	const [isLoading, setIsLoading] = useState(true); // Add loading state
 
@@ -38,6 +47,14 @@ const Profile = () => {
 	const editProfile = () => {
 		navigate('/editprofile')
 	};
+
+  const editServices = () => {
+		navigate('/editservices')
+	};
+
+  const editAvailability = () => {
+    navigate('/editAvailability')
+  };
 
 	useEffect(() => {
     if (user) {
@@ -52,7 +69,16 @@ const Profile = () => {
           setState(userData.state || '');
           setZip(userData.zip || '');
           setPhone(userData.phone || '');
-          // setServices(userData.services || [{ name: '', price: 0 }]);
+          setAvailability(userData.availability || {
+						sunday: { startTime: '', endTime: '' },
+						monday: { startTime: '', endTime: '' },
+						tuesday: { startTime: '', endTime: '' },
+						wednesday: { startTime: '', endTime: '' },
+						thursday: { startTime: '', endTime: '' },
+						friday: { startTime: '', endTime: '' },
+						saturday: { startTime: '', endTime: '' },
+					});
+          setServices(userData.services || {});
           setIsLoading(false);
         })
         .catch((error) => {
@@ -128,46 +154,42 @@ const Profile = () => {
 					 <div>{phone}</div>
 				</Col>
 				<Col xs={6}>
+          <Button onClick={editAvailability} variant='primary'>Edit Availability</Button>
 						<div>Business Hours</div>
-						<div>Monday 9AM-1PM, 2PM-6PM</div>
-						<div>Tuesday 9AM-1PM, 2PM-6PM</div>
-						<div>Wednesday 9AM-1PM, 2PM-6PM</div>
-						<div>Thursday 9AM-1PM, 2PM-6PM</div>
-						<div>Friday 9AM-1PM, 2PM-6PM</div>
-						<div>Saturday 9AM-1PM, 2PM-6PM</div>
-						<div>Sunday 9AM-1PM, 2PM-6PM</div>
+						<div>MONDAY {availability.monday.startTime} to {availability.monday.endTime}</div>
+						<div>TUESDAY {availability.tuesday.startTime} to {availability.tuesday.endTime}</div>
+						<div>WEDNESDAY {availability.wednesday.startTime} to {availability.wednesday.endTime}</div>
+						<div>THURSDAY {availability.thursday.startTime} to {availability.thursday.endTime}</div>
+						<div>FRIDAY {availability.friday.startTime} to {availability.friday.endTime}</div>
+						<div>SATURDAY {availability.saturday.startTime} to {availability.saturday.endTime}</div>
+						<div>Sunday {availability.sunday.startTime} to {availability.sunday.endTime}</div>
+
 				</Col>
 				<Col className='services-col' xs={10} md={6}>
 					<div className='info-title'>Services</div>
-					<ListGroup>
-						<ListGroup.Item>
-							<div className='service'>
-								<div className='service-title-description'>
-									<div className='service-title'>Basic Haircut</div>
-									<div className='service-description'>Service description</div>
-								</div>
-								<div className='service-price'>$15</div>
-							</div>
-						</ListGroup.Item>
-						<ListGroup.Item>
-							<div className='service'>
-								<div className='service-title-description'>
-									<div className='service-title'>Haircut and Beard</div>
-									<div className='service-description'>Service description</div>
-								</div>
-								<div className='service-price'>$30</div>
-							</div>
-						</ListGroup.Item>
-						<ListGroup.Item>
-							<div className='service'>
-								<div className='service-title-description'>
-									<div className='service-title'>Hair Color</div>
-									<div className='service-description'>Service description</div>
-								</div>
-								<div className='service-price'>$50</div>
-							</div>
-						</ListGroup.Item>
-					</ListGroup>
+          <div>
+          <div>
+            <Button onClick={editServices} variant="primary">Edit Services</Button>
+          </div>
+      {services.length === 0 ? (
+        <div>You currently don't offer any services</div>
+      ) : (
+        <ListGroup>
+          {services.map((service, index) => (
+            <ListGroup.Item key={index}>
+              <div className='service'>
+                <div className='service-title-description'>
+                  <div className='service-title'>{service.name}</div>
+                  <div className='service-description'>{service.description}</div>
+                </div>
+                <div className='service-price'>{service.price}</div>
+              </div>
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
+        
+      )}
+      </div>	
 				</Col>
 			</Row>
 			<Row className='third-row'>

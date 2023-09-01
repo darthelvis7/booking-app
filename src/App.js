@@ -4,6 +4,8 @@ import Signin from './pages/Signin';
 import Profile from './pages/Profile';
 import Home from './pages/Home';
 import EditProfile from './pages/EditProfile';
+import EditServices from './pages/EditServices';
+import EditAvailability from './pages/EditAvailability';
 import Search from './pages/Search';
 import Appointments from './pages/Appointments';
 import NavBar from './components/NavBar';
@@ -25,6 +27,8 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/editprofile" element={<EditProfile />} />
+          <Route path="/editservices" element={<EditServices />} />
+          <Route path="/editAvailability" element={<EditAvailability />} />
           <Route path="/search" element={<Search />} />
           <Route path="/appointments" element={<Appointments />} />
         </Routes>

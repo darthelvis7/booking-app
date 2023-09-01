@@ -12,11 +12,6 @@ import {
   updateUserDocumentProfileImage,
 	getUserDocument,
 	updateUserDocumentField,
-	// updateUserDocumentAddress,
-	// updateUserDocumentCity,
-	// updateUserDocumentState,
-	// updateUserDocumentZip,
-	// updateUserDocumentPhone,
 } from '../firebase';
 import avatar from '../assets/profileavatar.png';
 

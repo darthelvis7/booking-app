@@ -187,3 +187,61 @@ export const updateUserDocumentField = async (userId, fieldName, value) => {
     console.error('Error updating user document:', error);
   }
 };
+
+// Services
+
+export const updateUserDocumentServices = async (userId, services) => {
+  try {
+    const userDocRef = doc(db, 'users', userId);
+    await updateDoc(userDocRef, {
+      services: services || [],
+    });
+    console.log(
+      'User document updated with services successfully!',
+      userDocRef
+    );
+  } catch (error) {
+    console.error('Error updating user document with services:', error);
+  }
+};
+
+export const removeServiceFromUserDocument = async (userId, service) => {
+  try {
+    const userDocRef = doc(db, 'users', userId);
+
+    await updateDoc(userDocRef, {
+      services: arrayRemove(service),
+    });
+
+    console.log('Service removed from user document successfully!');
+  } catch (error) {
+    console.error('Error removing service from user document:', error);
+    throw error;
+  }
+};
+
+// Availability
+
+export const updateUserAvailability = async (userId, availability) => {
+  try {
+    const userDocRef = doc(db, 'users', userId);
+    await updateDoc(userDocRef, {
+      availability: availability,
+    });
+    console.log('successfully updated availability');
+  } catch (error) {
+    console.log('error updating availability', error);
+  }
+};
+
+export const updateUserTimeSlots = async (userId, timeSlots) => {
+  try {
+    const userDocRef = doc(db, 'users', userId);
+    await updateDoc(userDocRef, {
+      timeSlots: timeSlots,
+    });
+    console.log('successfully updated timeSlots');
+  } catch (error) {
+    console.log('error updating timeSlots', error);
+  }
+};
