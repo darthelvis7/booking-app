@@ -1,36 +1,52 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react';
+import { UserContext } from '../UserContext';
 import { Button } from 'react-bootstrap';
-import TimePicker from '../components/TimePicker'
+import TimePicker from '../components/TimePicker';
+import { updateUserAvailability } from '../firebase';
 
 const EditAvailability = () => {
+	const { user, setUser } = useContext(UserContext);
 
-	const [timeInterval, setTimeInterval] = useState(30); // Default interval is 30 minutes
+  const [timeInterval, setTimeInterval] = useState(30); // Default interval is 30 minutes
 
   const handleIntervalChange = (event) => {
     setTimeInterval(parseInt(event.target.value));
   };
 
-	const [startTime, setStartTime] = useState('09:00 AM');
-  const [endTime, setEndTime] = useState('06:00 PM');
+  const [availability, setAvailability] = useState({
+    monday: { start: '09:00 AM', end: '06:00 PM' },
+		tuesday: { start: '09:00 AM', end: '06:00 PM' },
+    wednesday: { start: '09:00 AM', end: '06:00 PM' },
+    thursday: { start: '09:00 AM', end: '06:00 PM' },
+    friday: { start: '09:00 AM', end: '06:00 PM' },
+    saturday: { start: '09:00 AM', end: '06:00 PM' },
+    sunday: { start: '09:00 AM', end: '06:00 PM' },
+    // Repeat for other days of the week
+  });
 
-	const handleStartTimeChange = (newStartTime) => {
-    setStartTime(newStartTime);
-		console.log(startTime);
+  const handleTimeChange = (day, timeType, newTime) => {
+    setAvailability((prevAvailability) => ({
+      ...prevAvailability,
+      [day]: {
+        ...prevAvailability[day],
+        [timeType]: newTime,
+      },
+    }));
   };
 
-  const handleEndTimeChange = (newEndTime) => {
-    setEndTime(newEndTime);
-		console.log(endTime);
+	const handleAvailabilityUpdate = async () => {
+    try {
+      await updateUserAvailability(user.uid, availability);
+      console.log('Availability updated successfully!');
+      console.log(availability);
+    } catch (error) {
+      console.error('Error updating services:', error);
+    }
   };
 
-	const handleSubmitTime = () => {
-		console.log("start time:", startTime);
-		console.log("end time:", endTime)
-	};
-
-	return (
-		<div>
-      <h2>Parent Component</h2>
+  return (
+    <div>
+      <h2>Edit Availability</h2>
       <div>
         <label>Select time interval:</label>
         <select value={timeInterval} onChange={handleIntervalChange}>
@@ -39,25 +55,30 @@ const EditAvailability = () => {
           <option value={60}>1 hour</option>
         </select>
       </div>
-      <div>
-        <h3>Start Time</h3>
-        <TimePicker
-          initialTime="09:00 AM"
-          onTimeChange={handleStartTimeChange}
-          timeInterval={timeInterval}
-        />
-      </div>
-			<div>
-        <h3>End Time</h3>
-        <TimePicker
-          initialTime="06:00 PM"
-          onTimeChange={handleEndTimeChange}
-          timeInterval={timeInterval}
-        />
-      </div>
-			<Button onClick={handleSubmitTime}>Submit</Button>
+      {Object.keys(availability).map((day) => (
+        <div key={day}>
+          <h3>{day.charAt(0).toUpperCase() + day.slice(1)}</h3>
+          <div>
+            <label>Start Time:</label>
+            <TimePicker
+              initialTime={availability[day].start}
+              onTimeChange={(newTime) => handleTimeChange(day, 'start', newTime)}
+              timeInterval={timeInterval}
+            />
+          </div>
+          <div>
+            <label>End Time:</label>
+            <TimePicker
+              initialTime={availability[day].end}
+              onTimeChange={(newTime) => handleTimeChange(day, 'end', newTime)}
+              timeInterval={timeInterval}
+            />
+          </div>
+        </div>
+      ))}
+      <Button onClick={handleAvailabilityUpdate}>Submit</Button>
     </div>
-	)
-}
+  );
+};
 
-export default EditAvailability
+export default EditAvailability;
