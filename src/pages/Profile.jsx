@@ -9,17 +9,13 @@ import { useNavigate } from 'react-router-dom';
 import {
   getUserProfileImageUrl,
   getUserDocument,
-  updateUserDocumentField
 } from '../firebase';
-
-
-import me from '../assets/elviscropped.png';
 import avatar from '../assets/profileavatar.png';
 
 import { UserContext } from '../UserContext';
 
 const Profile = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [bio, setBio] = useState(null);
   const [business, setBusiness] = useState(null);
   const [address, setAddress] = useState(null);
@@ -56,6 +52,10 @@ const Profile = () => {
     navigate('/editAvailability')
   };
 
+  const editPhotos = () => {
+    navigate('/editPhotos')
+  };
+
 	useEffect(() => {
     if (user) {
       // Fetch the user data from Firestore using the user's UID
@@ -78,7 +78,7 @@ const Profile = () => {
 						friday: { startTime: '', endTime: '' },
 						saturday: { startTime: '', endTime: '' },
 					});
-          setServices(userData.services || {});
+          setServices(userData.services || []);
           setIsLoading(false);
         })
         .catch((error) => {
@@ -153,18 +153,17 @@ const Profile = () => {
 					 <div>{`${city}, ${state}                                                                       ${zip}`}</div>
 					 <div>{phone}</div>
 				</Col>
-				<Col xs={6}>
-          <Button onClick={editAvailability} variant='primary'>Edit Availability</Button>
-						<div>Business Hours</div>
-						<div>MONDAY {availability.monday.startTime} to {availability.monday.endTime}</div>
-						<div>TUESDAY {availability.tuesday.startTime} to {availability.tuesday.endTime}</div>
-						<div>WEDNESDAY {availability.wednesday.startTime} to {availability.wednesday.endTime}</div>
-						<div>THURSDAY {availability.thursday.startTime} to {availability.thursday.endTime}</div>
-						<div>FRIDAY {availability.friday.startTime} to {availability.friday.endTime}</div>
-						<div>SATURDAY {availability.saturday.startTime} to {availability.saturday.endTime}</div>
-						<div>Sunday {availability.sunday.startTime} to {availability.sunday.endTime}</div>
-
-				</Col>
+        <Col xs={6}>
+  <Button onClick={editAvailability} variant='primary'>Edit Availability</Button>
+  <div>Business Hours</div>
+  <div>MONDAY {availability.monday.start && availability.monday.end ? `${availability.monday.start} to ${availability.monday.end}` : 'Closed'}</div>
+  <div>TUESDAY {availability.tuesday.start && availability.tuesday.end ? `${availability.tuesday.start} to ${availability.tuesday.end}` : 'Closed'}</div>
+  <div>WEDNESDAY {availability.wednesday.start && availability.wednesday.end ? `${availability.wednesday.start} to ${availability.wednesday.end}` : 'Closed'}</div>
+  <div>THURSDAY {availability.thursday.start && availability.thursday.end ? `${availability.thursday.start} to ${availability.thursday.end}` : 'Closed'}</div>
+  <div>FRIDAY {availability.friday.start && availability.friday.end ? `${availability.friday.start} to ${availability.friday.end}` : 'Closed'}</div>
+  <div>SATURDAY {availability.saturday.start && availability.saturday.end ? `${availability.saturday.start} to ${availability.saturday.end}` : 'Closed'}</div>
+  <div>SUNDAY {availability.sunday.start && availability.sunday.end ? `${availability.sunday.start} to ${availability.sunday.end}` : 'Closed'}</div>
+</Col>
 				<Col className='services-col' xs={10} md={6}>
 					<div className='info-title'>Services</div>
           <div>
@@ -194,6 +193,9 @@ const Profile = () => {
 			</Row>
 			<Row className='third-row'>
 				<div>Photos</div>
+        <div>
+          <Button onClick={editPhotos} >Edit Photos</Button>
+        </div>
 				<Col md={12} className="photo-column">
 				<Image className='portfolio-photo' src={avatar} rounded />
 				<Image className='portfolio-photo' src={avatar} rounded />

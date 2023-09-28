@@ -32,7 +32,7 @@ const TimePicker = ({ initialTime, onTimeChange, timeInterval }) => {
   return (
     <div>
 			<div>Select Time</div>
-      <select value={selectedTime} onChange={handleTimeChange}>
+      <select value={selectedTime} onChange={handleTimeChange} onClick={() => {}}>
         {generateTimeOptions().map((timeOption) => (
           <option key={timeOption} value={timeOption}>
             {timeOption}

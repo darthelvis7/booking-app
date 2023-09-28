@@ -1,17 +1,15 @@
-import React, { useState, useContext, useEffect } from 'react';
+import { React, useState, useEffect, useContext } from 'react';
 import { UserContext } from '../UserContext';
-import { Button } from 'react-bootstrap';
 import TimePicker from '../components/TimePicker';
-import { updateUserAvailability, getUserDocument } from '../firebase';
+import Button from 'react-bootstrap/Button';
+import { getUserDocument, updateUserAvailability, updateUserTimeSlots } from '../firebase';
 
 const EditAvailability = () => {
-	const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
 
-	const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState(null);
 
-
-	const [isLoading, setIsLoading] = useState(true); // Add loading state
-
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   const [timeInterval, setTimeInterval] = useState(30); // Default interval is 30 minutes
 
@@ -19,18 +17,35 @@ const EditAvailability = () => {
     setTimeInterval(parseInt(event.target.value));
   };
 
-
-	const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  const daysOfWeek = [
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+    'sunday',
+  ];
 
   const [availability, setAvailability] = useState({
     monday: { start: '09:00 AM', end: '06:00 PM' },
-		tuesday: { start: '09:00 AM', end: '06:00 PM' },
+    tuesday: { start: '09:00 AM', end: '06:00 PM' },
     wednesday: { start: '09:00 AM', end: '06:00 PM' },
     thursday: { start: '09:00 AM', end: '06:00 PM' },
     friday: { start: '09:00 AM', end: '06:00 PM' },
     saturday: { start: '09:00 AM', end: '06:00 PM' },
     sunday: { start: '09:00 AM', end: '06:00 PM' },
     // Repeat for other days of the week
+  });
+
+	const [timeSlots, setTimeSlots] = useState({
+    sunday: [],
+    monday: [],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: [],
+    saturday: [],
   });
 
   const handleTimeChange = (day, timeType, newTime) => {
@@ -43,42 +58,70 @@ const EditAvailability = () => {
     }));
   };
 
-	const handleAvailabilityUpdate = async () => {
+  const handleAvailabilityUpdate = async () => {
     try {
       await updateUserAvailability(user.uid, availability);
       console.log('Availability updated successfully!');
       console.log(availability);
-			console.log("test", availability.monday.start);
+			await updateUserTimeSlots(user.uid, timeSlots);
+			console.log(timeSlots);
     } catch (error) {
       console.error('Error updating services:', error);
     }
   };
 
+// Function to generate time slots at 30-minute intervals
+const generateTimeSlots = (startTime, endTime) => {
+  const slots = [];
+  const start = new Date(`2023-01-01T${startTime}`);
+  const end = new Date(`2023-01-01T${endTime}`);
 
+  while (start < end) {
+    const formattedTime = start.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    slots.push(formattedTime);
+    start.setMinutes(start.getMinutes() + 30);
+  }
 
-	useEffect(() => {
+  return slots;
+};
+
+  useEffect(() => {
+    // Generate time slots whenever the availability changes
+    const updatedTimeSlots = {};
+    for (const day in availability) {
+      const { start, end } = availability[day];
+      updatedTimeSlots[day] = generateTimeSlots(start, end);
+    }
+    setTimeSlots(updatedTimeSlots);
+  }, [availability]);
+
+  useEffect(() => {
     if (user) {
       // Fetch the user data from Firestore using the user's UID
       getUserDocument(user.uid)
         .then((userData) => {
-          setAvailability(userData.availability || {
-						sunday: { startTime: '', endTime: '' },
-						monday: { startTime: '', endTime: '' },
-						tuesday: { startTime: '', endTime: '' },
-						wednesday: { startTime: '', endTime: '' },
-						thursday: { startTime: '', endTime: '' },
-						friday: { startTime: '', endTime: '' },
-						saturday: { startTime: '', endTime: '' },
-					});
+          setAvailability(
+            userData.availability || {
+              sunday: { start: '', end: '' },
+              monday: { start: '', end: '' },
+              tuesday: { start: '', end: '' },
+              wednesday: { start: '', end: '' },
+              thursday: { start: '', end: '' },
+              friday: { start: '', end: '' },
+              saturday: { start: '', end: '' },
+            }
+          );
           setIsLoading(false);
         })
         .catch((error) => {
           console.error('Error fetching user data:', error);
           setIsLoading(false);
         });
-			}
-		}, []);
-
+    }
+  }, []);
 
   return (
     <div>
@@ -91,34 +134,38 @@ const EditAvailability = () => {
           <option value={60}>1 hour</option>
         </select>
       </div>
-			{daysOfWeek.map((day) => (
-      <div key={day}>
-        <h3>{day.charAt(0).toUpperCase() + day.slice(1)}</h3>
-        <div>
-          <label>Start Time:</label>
-          <TimePicker
-            initialTime={availability[day].start}
-            onTimeChange={(newTime) => handleTimeChange(day, 'start', newTime)}
-            timeInterval={timeInterval}
-          />
+      {daysOfWeek.map((day) => (
+        <div key={day}>
+          <h3>{day.charAt(0).toUpperCase() + day.slice(1)}</h3>
+          <div>
+            <label>Start Time:</label>
+            <TimePicker
+              initialTime={availability[day].start}
+              onTimeChange={(newTime) =>
+                handleTimeChange(day, 'start', newTime)
+              }
+              timeInterval={timeInterval}
+            />
+          </div>
+          <div>
+            <label>End Time:</label>
+            <TimePicker
+              initialTime={availability[day].end}
+              onTimeChange={(newTime) => handleTimeChange(day, 'end', newTime)}
+              timeInterval={timeInterval}
+            />
+          </div>
         </div>
-        <div>
-          <label>End Time:</label>
-          <TimePicker
-            initialTime={availability[day].end}
-            onTimeChange={(newTime) => handleTimeChange(day, 'end', newTime)}
-            timeInterval={timeInterval}
-          />
-        </div>
-      </div>
-    ))}
-			<div>{availability.monday.start}</div>
-			<select value={2}>
-				<option>1</option>
-				<option>2</option>
-				<option>3</option>
-			</select>
+      ))}
       <Button onClick={handleAvailabilityUpdate}>Submit</Button>
+			<div>
+      <h4>Sunday</h4>
+      <ul>
+        {timeSlots.sunday.map((slot) => (
+          <li key={slot}>{slot}</li>
+        ))}
+      </ul>
+    </div>
     </div>
   );
 };

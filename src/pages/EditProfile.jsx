@@ -10,22 +10,21 @@ import Button from 'react-bootstrap/Button';
 import {
   getUserProfileImageUrl,
   updateUserDocumentProfileImage,
-	getUserDocument,
-	updateUserDocumentField,
+  getUserDocument,
+  updateUserDocumentField,
 } from '../firebase';
 import avatar from '../assets/profileavatar.png';
-
 
 const EditProfile = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [pickedImage, setPickedImage] = useState(null);
   const [bio, setBio] = useState('');
-	const [business, setBusiness] = useState('');
+  const [business, setBusiness] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
-	const [zip, setZip] = useState('');
-	const [phone, setPhone] = useState('');
+  const [zip, setZip] = useState('');
+  const [phone, setPhone] = useState('');
   const { user, setUser } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
 
@@ -35,12 +34,12 @@ const EditProfile = () => {
       // getUserDocument(user.uid)
       //   .then((userData) => {
       //     setBio(userData.bio || '');
-			// 		setBusiness(userData.business || '');
+      // 		setBusiness(userData.business || '');
       //     setAddress(userData.address || '');
       //     setCity(userData.city || '');
       //     setState(userData.state || '');
       //     setZip(userData.zip || '');
-			// 		setPhone(userData.phone || '');
+      // 		setPhone(userData.phone || '');
       //     setServices(userData.services || [{ name: '', price: 0 }]);
       //     setIsLoading(false);
       //   })
@@ -91,7 +90,7 @@ const EditProfile = () => {
 
   // Profile Update
 
-	const handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     handleProfileUpdate();
   };
@@ -99,13 +98,13 @@ const EditProfile = () => {
   const handleProfileUpdate = async (e) => {
     // e.preventDefault();
     console.log('button pressed');
-		await updateUserDocumentField(user.uid, 'bio', bio);
-		await updateUserDocumentField(user.uid, 'business', business);
-		await updateUserDocumentField(user.uid, 'address', address);
-		await updateUserDocumentField(user.uid, 'city', city);
-		await updateUserDocumentField(user.uid, 'state', state);
-		await updateUserDocumentField(user.uid, 'zip', zip);
-		await updateUserDocumentField(user.uid, 'phone', phone);
+    await updateUserDocumentField(user.uid, 'bio', bio);
+    await updateUserDocumentField(user.uid, 'business', business);
+    await updateUserDocumentField(user.uid, 'address', address);
+    await updateUserDocumentField(user.uid, 'city', city);
+    await updateUserDocumentField(user.uid, 'state', state);
+    await updateUserDocumentField(user.uid, 'zip', zip);
+    await updateUserDocumentField(user.uid, 'phone', phone);
   };
 
   return (
@@ -127,12 +126,13 @@ const EditProfile = () => {
           <Col xs={8} md={6}>
             <div>
               <div>Username</div>
-							<Form.Group>Profile Photo
-  <Form.Control
-    type="file"
-    onChange={handleImageChange}
-  />
-</Form.Group>
+              <Form.Group>
+                Profile Photo
+                <Form.Control type="file" onChange={handleImageChange} />
+                <Button onClick={handleImageUpload} variant="primary" type="submit">
+          Save
+        </Button>
+              </Form.Group>
             </div>
           </Col>
         </Row>
@@ -142,8 +142,11 @@ const EditProfile = () => {
               <Form.Label>Bio</Form.Label>
             </div>
             <div>
-              <Form.Control onChange={(e) => setBio(e.target.value)}
- placeholder={bio} as="textarea"></Form.Control>
+              <Form.Control
+                onChange={(e) => setBio(e.target.value)}
+                placeholder={bio}
+                as="textarea"
+              ></Form.Control>
             </div>
           </Form.Group>
         </Row>
@@ -153,7 +156,10 @@ const EditProfile = () => {
               <Form.Label>Business Name</Form.Label>
             </div>
             <div>
-              <Form.Control onChange={(e) => setBusiness(e.target.value)} placeholder={business}></Form.Control>
+              <Form.Control
+                onChange={(e) => setBusiness(e.target.value)}
+                placeholder={business}
+              ></Form.Control>
             </div>
           </Form.Group>
           <Form.Group>
@@ -161,7 +167,10 @@ const EditProfile = () => {
               <Form.Label>Address</Form.Label>
             </div>
             <div>
-              <Form.Control onChange={(e) => setAddress(e.target.value)} placeholder={address}></Form.Control>
+              <Form.Control
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder={address}
+              ></Form.Control>
             </div>
           </Form.Group>
           <Form.Group>
@@ -169,7 +178,10 @@ const EditProfile = () => {
               <Form.Label>City</Form.Label>
             </div>
             <div>
-              <Form.Control onChange={(e) => setCity(e.target.value)} placeholder={city}></Form.Control>
+              <Form.Control
+                onChange={(e) => setCity(e.target.value)}
+                placeholder={city}
+              ></Form.Control>
             </div>
           </Form.Group>
           <Form.Group>
@@ -177,7 +189,10 @@ const EditProfile = () => {
               <Form.Label>State</Form.Label>
             </div>
             <div>
-              <Form.Control onChange={(e) => setState(e.target.value)} placeholder={state}></Form.Control>
+              <Form.Control
+                onChange={(e) => setState(e.target.value)}
+                placeholder={state}
+              ></Form.Control>
             </div>
           </Form.Group>
           <Form.Group>
@@ -185,7 +200,10 @@ const EditProfile = () => {
               <Form.Label>Zip Code</Form.Label>
             </div>
             <div>
-              <Form.Control onChange={(e) => setZip(e.target.value)} placeholder={zip}></Form.Control>
+              <Form.Control
+                onChange={(e) => setZip(e.target.value)}
+                placeholder={zip}
+              ></Form.Control>
             </div>
           </Form.Group>
         </Row>
@@ -195,7 +213,10 @@ const EditProfile = () => {
               <Form.Label>Phone Number</Form.Label>
             </div>
             <div>
-              <Form.Control onChange={(e) => setPhone(e.target.value)} placeholder={phone}></Form.Control>
+              <Form.Control
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder={phone}
+              ></Form.Control>
             </div>
           </Form.Group>
         </Row>

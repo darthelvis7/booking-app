@@ -150,6 +150,40 @@ export const updateUserDocumentProfileImage = async (userId, profileImage) => {
   }
 };
 
+// Photos Update
+
+export const uploadMultiplePhotos = async (userId, photos) => {
+  try {
+    const storage = getStorage();
+    const downloadUrls = [];
+
+    for (let i = 0; i < photos.length; i++) {
+      const photo = photos[i];
+      const uniqueFileName = `${userId}_${Date.now()}_${i}`; // Create a unique file name
+      const storageRef = ref(storage, `userPhotos/${userId}/${uniqueFileName}`);
+
+      // Upload the photo to Firebase Storage
+      await uploadBytes(storageRef, photo);
+
+      // Get the download URL of the uploaded photo
+      const imageUrl = await getDownloadURL(storageRef);
+
+      // Store the download URL in an array
+      downloadUrls.push(imageUrl);
+    }
+
+    // Update the user document in Firestore with the download URLs of the uploaded photos
+    const userDocRef = doc(db, 'users', userId);
+    await updateDoc(userDocRef, {
+      photos: downloadUrls, // Assuming you have a "photos" field in your Firestore document
+    });
+
+    return downloadUrls; // Return an array of download URLs
+  } catch (error) {
+    throw new Error('Error uploading photos:', error);
+  }
+};
+
 // Bio Update
 
 // export const updateUserDocumentBio = async (userId, bio) => {
